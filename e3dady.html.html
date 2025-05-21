@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>عد تنازلي لهندسة بورسعيد</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .nav-buttons {
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-button {
+            padding: 10px 30px;
+            background-color: #333;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .nav-button.active {
+            background-color: #4CAF50;
+            transform: scale(1.05);
+        }
+
+        .group-content {
+            display: none;
+        }
+
+        .group-content.active {
+            display: block;
+        }
+
+        #countdownA, #countdownB {
+            font-size: 3em;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #333;
+            border-radius: 15px;
+            max-width: 800px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .time-segment {
+            background-color: #4a4a4a;
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 120px;
+        }
+
+        .label {
+            font-size: 0.4em;
+            color: #ccc;
+            margin-top: 10px;
+        }
+
+        .congrats {
+            font-size: 2.5em;
+            color: #4CAF50;
+            margin: 50px 0;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        .university-header {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 30px 0;
+            color: #4CAF50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .prophet-message {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 1.8em;
+            color: #FFD700;
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #4CAF50; }
+            to { text-shadow: 0 0 20px #4CAF50, 0 0 30px #4CAF50; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-buttons">
+        <button class="nav-button active" onclick="showGroup('A')">جروب A</button>
+        <button class="nav-button" onclick="showGroup('B')">جروب B</button>
+    </div>
+
+    <div class="university-header">إعدادي هندسة بورسعيد دفعة 2025</div>
+
+    <!-- واجهة جروب A -->
+    <div id="groupA" class="group-content active">
+        <h1>هانت يا هندسة ⚙️</h1>
+        <div id="countdownA">
+            <div class="time-segment">
+                <div id="daysA">0</div>
+                <div class="label">أيام</div>
+            </div>
+            <div class="time-segment">
+                <div id="hoursA">0</div>
+                <div class="label">ساعات</div>
+            </div>
+            <div class="time-segment">
+                <div id="minutesA">0</div>
+                <div class="label">دقائق</div>
+            </div>
+            <div class="time-segment">
+                <div id="secondsA">0</div>
+                <div class="label">ثواني</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- واجهة جروب B -->
+    <div id="groupB" class="group-content">
+        <h1>هانت يا هندسة ⚙️</h1>
+        <div id="countdownB">
+            <div class="time-segment">
+                <div id="daysB">0</div>
+                <div class="label">أيام</div>
+            </div>
+            <div class="time-segment">
+                <div id="hoursB">0</div>
+                <div class="label">ساعات</div>
+            </div>
+            <div class="time-segment">
+                <div id="minutesB">0</div>
+                <div class="label">دقائق</div>
+            </div>
+            <div class="time-segment">
+                <div id="secondsB">0</div>
+                <div class="label">ثواني</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prophet-message">صل على سيدنا محمد</div>
+
+    <script>
+        function showGroup(group) {
+            document.querySelectorAll('.group-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-button').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`group${group}`).classList.add('active');
+            document.querySelector(`button[onclick="showGroup('${group}')"]`).classList.add('active');
+        }
+
+        // تواريخ الانتهاء
+        const targetDateA = new Date(2025, 5, 19, 16, 0, 0); // 19 يونيو 2025 4 مساءً
+        const targetDateB = new Date(2025, 5, 17, 16, 0, 0); // 17 يونيو 2025 4 مساءً
+
+        const intervals = {
+            A: setInterval(() => updateCountdown('A', targetDateA), 1000),
+            B: setInterval(() => updateCountdown('B', targetDateB), 1000)
+        };
+
+        function updateCountdown(group, targetDate) {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const countdownElement = document.getElementById(`countdown${group}`);
+            const daysElement = document.getElementById(`days${group}`);
+            const hoursElement = document.getElementById(`hours${group}`);
+            const minutesElement = document.getElementById(`minutes${group}`);
+            const secondsElement = document.getElementById(`seconds${group}`);
+
+            if (distance < 0) {
+                clearInterval(intervals[group]);
+                countdownElement.innerHTML = `
+                    <div class="congrats">ألف مبروك يا هندسة و عقبال التخرج 🥳🥳</div>
+                `;
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            daysElement.textContent = days;
+            hoursElement.textContent = hours;
+            minutesElement.textContent = minutes;
+            secondsElement.textContent = seconds;
+        }
+
+        // التشغيل الأولي
+        updateCountdown('A', targetDateA);
+        updateCountdown('B', targetDateB);
+    </script>
+</body>
+</html>
