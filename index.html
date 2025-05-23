@@ -217,6 +217,8 @@
     <div class="prophet-message">صل على سيدنا محمد</div>
 
     <script>
+        let motivationAdded = false;
+
         function showGroup(group) {
             document.querySelectorAll('.group-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-button').forEach(el => el.classList.remove('active'));
@@ -225,7 +227,6 @@
             document.querySelector(`button[onclick="showGroup('${group}')"]`).classList.add('active');
         }
 
-        // تواريخ الانتهاء
         const targetDateA = new Date(2025, 5, 19, 16, 0, 0);
         const targetDateB = new Date(2025, 5, 17, 16, 0, 0);
 
@@ -233,37 +234,6 @@
             A: setInterval(() => updateCountdown('A', targetDateA), 1000),
             B: setInterval(() => updateCountdown('B', targetDateB), 1000)
         };
-
-        // دالة تحديث حالة الامتحانات
-        function updateExamStatus() {
-            const now = new Date();
-            
-            // تحديث الجروب A
-            const examsA = document.querySelectorAll('#groupA tr:not(:first-child)');
-            examsA.forEach(exam => {
-                const dateString = exam.cells[1].textContent;
-                const [day, monthName, year] = dateString.split(' ');
-                const monthMap = {
-                    'مايو': 4,
-                    'يونيو': 5
-                };
-                const examDate = new Date(year, monthMap[monthName], day);
-                if (now > examDate) exam.classList.add('completed');
-            });
-
-            // تحديث الجروب B
-            const examsB = document.querySelectorAll('#groupB tr:not(:first-child)');
-            examsB.forEach(exam => {
-                const dateString = exam.cells[1].textContent;
-                const [day, monthName, year] = dateString.split(' ');
-                const monthMap = {
-                    'مايو': 4,
-                    'يونيو': 5
-                };
-                const examDate = new Date(year, monthMap[monthName], day);
-                if (now > examDate) exam.classList.add('completed');
-            });
-        }
 
         function updateCountdown(group, targetDate) {
             const now = new Date().getTime();
@@ -279,17 +249,17 @@
                 clearInterval(intervals[group]);
                 countdownElement.innerHTML = `<div class="congrats">ألف مبروك يا هندسة و عقبال التخرج 🥳🥳</div>`;
                 
-                // إزالة رسالة التحفيز إذا انتهى الجروب A
-                if(group === 'A') {
-                    const motivation = document.querySelector('.motivation');
-                    if(motivation) motivation.remove();
-                }
-                // إضافة رسالة التحفيز إذا انتهى الجروب B
-                else if(group === 'B') {
+                if(group === 'B' && !motivationAdded) {
                     const motivation = document.createElement('div');
                     motivation.className = 'motivation';
                     motivation.textContent = 'اقفلوا بسرعة عشان تلحقوا تخلصوا ال Machining';
                     document.getElementById('groupA').appendChild(motivation);
+                    motivationAdded = true;
+                }
+                
+                if(group === 'A') {
+                    const motivation = document.querySelector('.motivation');
+                    if(motivation) motivation.remove();
                 }
                 return;
             }
@@ -305,14 +275,31 @@
             secondsElement.textContent = seconds;
         }
 
-        // تحديث كل ثانية
+        function updateExamStatus() {
+            const now = new Date();
+            
+            const processExams = (group) => {
+                const exams = document.querySelectorAll(`#group${group} tr:not(:first-child)`);
+                exams.forEach(exam => {
+                    const dateString = exam.cells[1].textContent;
+                    const [day, monthName, year] = dateString.split(' ');
+                    const monthMap = {'مايو': 4, 'يونيو': 5};
+                    const examDate = new Date(year, monthMap[monthName], day);
+                    exam.classList.toggle('completed', now > examDate);
+                });
+            };
+
+            processExams('A');
+            processExams('B');
+        }
+
         setInterval(() => {
             updateCountdown('A', targetDateA);
             updateCountdown('B', targetDateB);
             updateExamStatus();
         }, 1000);
 
-        // التشغيل الأولي
+        // التهيئة الأولية
         updateCountdown('A', targetDateA);
         updateCountdown('B', targetDateB);
         updateExamStatus();
