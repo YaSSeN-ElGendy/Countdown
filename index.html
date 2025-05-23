@@ -87,13 +87,45 @@
 
         .prophet-message {
             font-family: 'Arial Black', sans-serif;
-            font-size: 2.5em;
+            font-size: 1.8em;
             color: #FFD700;
             position: fixed;
             bottom: 20px;
             width: 100%;
             text-align: center;
             animation: float 3s ease-in-out infinite;
+        }
+
+        .exam-table {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background-color: #333;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .exam-table th, .exam-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #4a4a4a;
+        }
+
+        .exam-table th {
+            background-color: #4CAF50;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .motivation {
+            color: #FF6347;
+            font-size: 1.5em;
+            margin: 20px 0;
+            font-weight: bold;
         }
 
         @keyframes glow {
@@ -137,6 +169,16 @@
                 <div class="label">ثواني</div>
             </div>
         </div>
+
+        <table class="exam-table">
+            <tr><th>المادة</th><th>التاريخ</th></tr>
+            <tr id="A-physics"><td>فيزياء</td><td>27 مايو 2025</td></tr>
+            <tr id="A-history"><td>تاريخ هندسي</td><td>29 مايو 2025</td></tr>
+            <tr id="A-math"><td>رياضيات</td><td>1 يونيو 2025</td></tr>
+            <tr id="A-mechanics"><td>ميكانيكا</td><td>15 يونيو 2025</td></tr>
+            <tr id="A-programming"><td>مقدمة الحاسب</td><td>17 يونيو 2025</td></tr>
+            <tr id="A-production"><td>تكنولوجيا الإنتاج</td><td>19 يونيو 2025</td></tr>
+        </table>
     </div>
 
     <!-- واجهة جروب B -->
@@ -160,6 +202,16 @@
                 <div class="label">ثواني</div>
             </div>
         </div>
+
+        <table class="exam-table">
+            <tr><th>المادة</th><th>التاريخ</th></tr>
+            <tr id="B-physics"><td>فيزياء</td><td>27 مايو 2025</td></tr>
+            <tr id="B-history"><td>تاريخ هندسي</td><td>29 مايو 2025</td></tr>
+            <tr id="B-math"><td>رياضيات</td><td>1 يونيو 2025</td></tr>
+            <tr id="B-chemistry"><td>كيمياء هندسية</td><td>3 يونيو 2025</td></tr>
+            <tr id="B-mechanics"><td>ميكانيكا</td><td>15 يونيو 2025</td></tr>
+            <tr id="B-programming"><td>مقدمة الحاسب</td><td>17 يونيو 2025</td></tr>
+        </table>
     </div>
 
     <div class="prophet-message">صل على سيدنا محمد</div>
@@ -173,9 +225,8 @@
             document.querySelector(`button[onclick="showGroup('${group}')"]`).classList.add('active');
         }
 
-        // تواريخ الانتهاء
-        const targetDateA = new Date(2025, 5, 19, 16, 0, 0); // 19 يونيو 2025 4 مساءً
-        const targetDateB = new Date(2025, 5, 17, 16, 0, 0); // 17 يونيو 2025 4 مساءً
+        const targetDateA = new Date(2025, 5, 19, 16, 0, 0);
+        const targetDateB = new Date(2025, 5, 17, 16, 0, 0);
 
         const intervals = {
             A: setInterval(() => updateCountdown('A', targetDateA), 1000),
@@ -194,9 +245,14 @@
 
             if (distance < 0) {
                 clearInterval(intervals[group]);
-                countdownElement.innerHTML = `
-                    <div class="congrats">ألف مبروك يا هندسة و عقبال التخرج 🥳🥳</div>
-                `;
+                countdownElement.innerHTML = `<div class="congrats">ألف مبروك يا هندسة و عقبال التخرج 🥳🥳</div>`;
+                
+                if(group === 'B') {
+                    const motivation = document.createElement('div');
+                    motivation.className = 'motivation';
+                    motivation.textContent = 'اقفلوا بسرعة عشان تلحقوا تخلصوا ال Machining';
+                    document.getElementById('groupA').appendChild(motivation);
+                }
                 return;
             }
 
@@ -211,7 +267,6 @@
             secondsElement.textContent = seconds;
         }
 
-        // التشغيل الأولي
         updateCountdown('A', targetDateA);
         updateCountdown('B', targetDateB);
     </script>
