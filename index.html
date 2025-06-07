@@ -39,6 +39,8 @@
 
         .group-content {
             display: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .group-content.active {
@@ -75,6 +77,8 @@
             color: #4CAF50;
             margin: 50px 0;
             animation: glow 1s ease-in-out infinite alternate;
+            position: relative;
+            z-index: 100;
         }
 
         .university-header {
@@ -94,6 +98,7 @@
             width: 100%;
             text-align: center;
             animation: float 3s ease-in-out infinite;
+            z-index: 100;
         }
 
         .exam-table {
@@ -104,6 +109,8 @@
             background-color: #333;
             border-radius: 15px;
             overflow: hidden;
+            position: relative;
+            z-index: 50;
         }
 
         .exam-table th, .exam-table td {
@@ -126,6 +133,23 @@
             font-size: 1.5em;
             margin: 20px 0;
             font-weight: bold;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* تأثير البالونات */
+        @keyframes balloon {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        .balloon {
+            position: absolute;
+            bottom: -50px;
+            font-size: 30px;
+            animation: balloon 4s ease-in forwards;
+            z-index: 10;
+            pointer-events: none;
         }
 
         @keyframes glow {
@@ -227,6 +251,26 @@
             document.querySelector(`button[onclick="showGroup('${group}')"]`).classList.add('active');
         }
 
+        function createBalloons(group) {
+            const balloons = ['🎈', '🎉', '🎊', '✨', '🎁'];
+            const container = document.getElementById(`group${group}`);
+            
+            for(let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    balloon.textContent = balloons[Math.floor(Math.random() * balloons.length)];
+                    balloon.style.left = Math.random() * 100 + '%';
+                    balloon.style.animationDuration = 3 + Math.random() * 2 + 's';
+                    container.appendChild(balloon);
+                    
+                    setTimeout(() => {
+                        balloon.remove();
+                    }, 4000);
+                }, i * 200);
+            }
+        }
+
         const targetDateA = new Date(2025, 5, 19, 16, 0, 0);
         const targetDateB = new Date(2025, 5, 17, 16, 0, 0);
 
@@ -249,10 +293,13 @@
                 clearInterval(intervals[group]);
                 countdownElement.innerHTML = `<div class="congrats">ألف مبروك يا هندسة و عقبال التخرج 🥳🥳</div>`;
                 
+                // إظهار البالونات لهذا الجروب
+                createBalloons(group);
+                
                 if(group === 'B' && !motivationAdded) {
                     const motivation = document.createElement('div');
                     motivation.className = 'motivation';
-                    motivation.textContent = 'Machiningاقفلوا بسرعة بقى عشان تلحقوا تخلصوا ال ';
+                    motivation.textContent = 'اقفلوا بسرعة عشان تلحقوا تخلصوا ال Machining';
                     document.getElementById('groupA').appendChild(motivation);
                     motivationAdded = true;
                 }
