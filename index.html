@@ -12,6 +12,7 @@
             padding: 20px;
             margin: 0;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .nav-buttons {
@@ -40,7 +41,6 @@
         .group-content {
             display: none;
             position: relative;
-            overflow: hidden;
         }
 
         .group-content.active {
@@ -57,6 +57,8 @@
             display: flex;
             justify-content: center;
             gap: 30px;
+            position: relative;
+            z-index: 50;
         }
 
         .time-segment {
@@ -147,19 +149,20 @@
                 opacity: 1;
             }
             100% { 
-                transform: translateY(-20vh) rotate(360deg); 
+                transform: translateY(-100px) rotate(360deg); 
                 opacity: 0;
             }
         }
 
         .balloon {
-            position: absolute;
-            bottom: -100px;
+            position: fixed;
             font-size: 40px;
             animation: balloon 4s linear forwards;
             z-index: 10;
             pointer-events: none;
             user-select: none;
+            left: calc(5% + (90% * var(--random-pos)));
+            bottom: -50px;
         }
 
         @keyframes glow {
@@ -263,10 +266,10 @@
 
         function createBalloons(group) {
             const balloons = ['🎈', '🎉', '🎊', '✨', '🎁'];
-            const container = document.getElementById(`group${group}`);
+            const container = document.body; // تغيير مهم: نستخدم body بدلاً من المجموعة
             
             // تنظيف أي بالونات سابقة
-            const oldBalloons = container.querySelectorAll('.balloon');
+            const oldBalloons = document.querySelectorAll('.balloon');
             oldBalloons.forEach(b => b.remove());
             
             for(let i = 0; i < 20; i++) {
@@ -274,9 +277,9 @@
                     const balloon = document.createElement('div');
                     balloon.className = 'balloon';
                     balloon.textContent = balloons[Math.floor(Math.random() * balloons.length)];
-                    balloon.style.left = Math.random() * 90 + 5 + '%';
-                    balloon.style.animationDuration = 3 + Math.random() * 3 + 's';
-                    balloon.style.animationDelay = Math.random() * 1 + 's';
+                    balloon.style.setProperty('--random-pos', Math.random());
+                    balloon.style.animationDuration = 3 + Math.random() * 2 + 's';
+                    balloon.style.animationDelay = Math.random() * 0.5 + 's';
                     container.appendChild(balloon);
                     
                     // إزالة البالون من DOM بعد انتهاء الحركة
