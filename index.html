@@ -12,7 +12,8 @@
             padding: 20px;
             margin: 0;
             min-height: 100vh;
-            overflow-x: hidden; /* تم تعديل هذا لضمان عدم وجود شريط تمرير أفقي غير مرغوب فيه */
+            overflow-x: hidden;
+            position: relative; /* مهم لبعض خصائص تحديد المواقع الفرعية */
         }
 
         .nav-buttons {
@@ -40,7 +41,7 @@
 
         .group-content {
             display: none;
-            position: relative; /* مهم لتموضع البالونات داخل كل مجموعة إذا أردت ذلك */
+            position: relative;
         }
 
         .group-content.active {
@@ -143,29 +144,29 @@
         @keyframes balloon {
             0% { 
                 transform: translateY(100vh) rotate(0deg); 
-                opacity: 0; /* تبدأ شفافة */
+                opacity: 0; 
             }
             10% {
-                opacity: 1; /* تصبح مرئية بسرعة */
+                opacity: 1; 
             }
             90% {
                 opacity: 1;
             }
             100% { 
                 transform: translateY(-100px) rotate(360deg); 
-                opacity: 0; /* تختفي عند الوصول للأعلى */
+                opacity: 0;
             }
         }
 
         .balloon {
-            position: fixed; /* تم التعديل إلى fixed لتظهر على كامل الشاشة */
+            position: fixed; 
             font-size: 40px;
             animation: balloon 4s linear forwards;
-            z-index: 999; /* تم زيادة الـ z-index لتظهر فوق كل شيء */
+            z-index: 999; 
             pointer-events: none;
             user-select: none;
             left: calc(5% + (90% * var(--random-pos)));
-            bottom: -50px; /* تبدأ من أسفل الشاشة */
+            bottom: -50px; 
         }
 
         @keyframes glow {
@@ -211,8 +212,7 @@
 
         <table class="exam-table">
             <tr><th>المادة</th><th>التاريخ</th></tr>
-            <tr id="A-physics"><td>فيزياء</td><td>27 مايو 2025</td></tr>
-            <tr id="A-history"><td>تاريخ هندسي</td><td>29 مايو 2025</td></tr>
+            <tr id="A-physics"><td>فيزياء</td><td>15 يونيو 2025</td></tr> <tr id="A-history"><td>تاريخ هندسي</td><td>29 مايو 2025</td></tr>
             <tr id="A-math"><td>رياضيات</td><td>1 يونيو 2025</td></tr>
             <tr id="A-mechanics"><td>ميكانيكا</td><td>15 يونيو 2025</td></tr>
             <tr id="A-programming"><td>مقدمة الحاسب</td><td>17 يونيو 2025</td></tr>
@@ -247,17 +247,15 @@
             <tr id="B-history"><td>تاريخ هندسي</td><td>29 مايو 2025</td></tr>
             <tr id="B-math"><td>رياضيات</td><td>1 يونيو 2025</td></tr>
             <tr id="B-chemistry"><td>كيمياء هندسية</td><td>3 يونيو 2025</td></tr>
-            <tr id="B-mechanics"><td>ميكانيكا</td><td>15 يونيو 2025</td></tr>
-            <tr id="B-programming"><td>مقدمة الحاسب</td><td>17 يونيو 2025</td></tr>
+            <tr id="B-mechanics"><td>ميكانيكا</td><td>15 يونيو 2025</td></tr> <tr id="B-programming"><td>مقدمة الحاسب</td><td>17 يونيو 2025</td></tr>
         </table>
     </div>
 
     <div class="prophet-message">صل على سيدنا محمد</div>
 
     <script>
-        let motivationAdded = false; // لتجنب تكرار إضافة رسالة التحفيز
+        let motivationAdded = false;
 
-        // وظيفة لإظهار محتوى جروب معين
         function showGroup(group) {
             document.querySelectorAll('.group-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-button').forEach(el => el.classList.remove('active'));
@@ -266,44 +264,61 @@
             document.querySelector(`button[onclick="showGroup('${group}')"]`).classList.add('active');
         }
 
-        // وظيفة لإنشاء وإطلاق البالونات
         function createBalloons() {
             const balloons = ['🎈', '🎉', '🎊', '✨', '🎁'];
-            const container = document.body; // البالونات تظهر على مستوى الجسم بالكامل
+            const container = document.body;
             
             // إزالة أي بالونات موجودة لتجنب التراكم
             document.querySelectorAll('.balloon').forEach(b => b.remove());
             
-            for(let i = 0; i < 30; i++) { // زيادة عدد البالونات لتبدو أفضل
+            for(let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     const balloon = document.createElement('div');
                     balloon.className = 'balloon';
                     balloon.textContent = balloons[Math.floor(Math.random() * balloons.length)];
                     balloon.style.setProperty('--random-pos', Math.random());
-                    balloon.style.animationDuration = (3 + Math.random() * 2) + 's'; // مدة حركة عشوائية
-                    balloon.style.animationDelay = (Math.random() * 0.5) + 's'; // تأخير عشوائي
+                    balloon.style.animationDuration = (3 + Math.random() * 2) + 's';
+                    balloon.style.animationDelay = (Math.random() * 0.5) + 's';
                     container.appendChild(balloon);
                     
-                    // إزالة البالون من DOM بعد انتهاء الحركة لعدم إثقال الصفحة
                     balloon.addEventListener('animationend', () => {
                         balloon.remove();
                     });
-                }, i * 150); // إطلاق البالونات على فترات متباعدة قليلاً
+                }, i * 150);
             }
         }
 
         // تواريخ انتهاء الامتحانات لكل جروب
-        // يرجى ملاحظة أن الشهور في JavaScript تبدأ من 0 (يناير = 0، ديسمبر = 11)
+        // تم تعديل توقيت رسالة التهنئة إلى الساعة 4 عصراً (16)
         const targetDateA = new Date(2025, 5, 19, 16, 0, 0); // 19 يونيو 2025، الساعة 4 مساءً
         const targetDateB = new Date(2025, 5, 17, 16, 0, 0); // 17 يونيو 2025، الساعة 4 مساءً
 
-        // الكائنات لتخزين معرفات الـ setInterval لكل جروب
+        // تغيير تاريخ امتحان الفيزياء والميكانيكا لجروب A و B ليتطابق مع اليوم الحالي للاختبار
+        // ملاحظة: الشهور في JavaScript تبدأ من 0 (يناير = 0، يونيو = 5)
+        const examDatesA = {
+            'A-physics': new Date(2025, 5, 15, 13, 0, 0), // 15 يونيو 2025, 1:00 PM
+            'A-history': new Date(2025, 4, 29, 13, 0, 0),
+            'A-math': new Date(2025, 5, 1, 13, 0, 0),
+            'A-mechanics': new Date(2025, 5, 15, 13, 0, 0), // 15 يونيو 2025, 1:00 PM
+            'A-programming': new Date(2025, 5, 17, 13, 0, 0),
+            'A-production': new Date(2025, 5, 19, 13, 0, 0)
+        };
+
+        const examDatesB = {
+            'B-physics': new Date(2025, 4, 27, 13, 0, 0),
+            'B-history': new Date(2025, 4, 29, 13, 0, 0),
+            'B-math': new Date(2025, 5, 1, 13, 0, 0),
+            'B-chemistry': new Date(2025, 5, 3, 13, 0, 0),
+            'B-mechanics': new Date(2025, 5, 15, 13, 0, 0), // 15 يونيو 2025, 1:00 PM
+            'B-programming': new Date(2025, 5, 17, 13, 0, 0)
+        };
+
+
         const intervals = {
             A: null,
             B: null
         };
 
-        // تحديث العد التنازلي وحالة الامتحانات
         function updateCountdown(group, targetDate) {
             const now = new Date().getTime();
             const distance = targetDate - now;
@@ -315,16 +330,13 @@
             const secondsElement = document.getElementById(`seconds${group}`);
 
             if (distance < 0) {
-                // إذا انتهى العد التنازلي
-                clearInterval(intervals[group]); // إيقاف التحديث للجروب
+                clearInterval(intervals[group]);
                 countdownElement.innerHTML = `<div class="congrats">ألف مبروك يا هندسة و عقبال التخرج 🥳🥳</div>`;
                 
-                // إظهار البالونات فقط إذا كانت هذه المجموعة هي النشطة حالياً
                 if (document.getElementById(`group${group}`).classList.contains('active')) {
                     createBalloons();
                 }
                 
-                // إضافة رسالة التحفيز لجروب A إذا انتهى جروب B أولاً
                 if(group === 'B' && !motivationAdded) {
                     const motivation = document.createElement('div');
                     motivation.className = 'motivation';
@@ -333,7 +345,6 @@
                     motivationAdded = true;
                 }
                 
-                // إزالة رسالة التحفيز عندما ينتهي جروب A
                 if(group === 'A') {
                     const motivation = document.querySelector('.motivation');
                     if(motivation) motivation.remove();
@@ -341,36 +352,34 @@
                 return;
             }
 
-            // حساب الوقت المتبقي
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // عرض الوقت المتبقي
             daysElement.textContent = days;
             hoursElement.textContent = hours;
             minutesElement.textContent = minutes;
             secondsElement.textContent = seconds;
         }
 
-        // تحديث حالة الامتحانات (مكتملة أم لا)
+        // تحديث حالة الامتحانات (مكتملة أم لا) بناءً على التاريخ والوقت (الساعة 1 ظهراً)
         function updateExamStatus() {
             const now = new Date();
             
-            const processExams = (group) => {
-                const exams = document.querySelectorAll(`#group${group} tr:not(:first-child)`);
-                exams.forEach(exam => {
-                    const dateString = exam.cells[1].textContent;
-                    const [day, monthName, year] = dateString.split(' ');
-                    const monthMap = {'مايو': 4, 'يونيو': 5}; // تمثيل الشهور بالأرقام (يناير=0)
-                    const examDate = new Date(year, monthMap[monthName], day);
-                    exam.classList.toggle('completed', now > examDate);
-                });
+            const processExams = (group, examDates) => {
+                for (const examId in examDates) {
+                    const examElement = document.getElementById(examId);
+                    if (examElement) {
+                        const examDateTime = examDates[examId];
+                        // يتم الشطب إذا كان الوقت الحالي أكبر من أو يساوي وقت الامتحان المحدد (الساعة 1 ظهراً)
+                        examElement.classList.toggle('completed', now >= examDateTime);
+                    }
+                }
             };
 
-            processExams('A');
-            processExams('B');
+            processExams('A', examDatesA);
+            processExams('B', examDatesB);
         }
 
         // تعيين فواصل زمنية لتحديث العد التنازلي وحالة الامتحانات
