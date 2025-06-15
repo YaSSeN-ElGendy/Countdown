@@ -12,7 +12,7 @@
             padding: 20px;
             margin: 0;
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow-x: hidden; /* تم تعديل هذا لضمان عدم وجود شريط تمرير أفقي غير مرغوب فيه */
         }
 
         .nav-buttons {
@@ -40,7 +40,7 @@
 
         .group-content {
             display: none;
-            position: relative;
+            position: relative; /* مهم لتموضع البالونات داخل كل مجموعة إذا أردت ذلك */
         }
 
         .group-content.active {
@@ -143,26 +143,29 @@
         @keyframes balloon {
             0% { 
                 transform: translateY(100vh) rotate(0deg); 
-                opacity: 1; 
+                opacity: 0; /* تبدأ شفافة */
             }
-            70% {
+            10% {
+                opacity: 1; /* تصبح مرئية بسرعة */
+            }
+            90% {
                 opacity: 1;
             }
             100% { 
                 transform: translateY(-100px) rotate(360deg); 
-                opacity: 0;
+                opacity: 0; /* تختفي عند الوصول للأعلى */
             }
         }
 
         .balloon {
-            position: fixed;
+            position: fixed; /* تم التعديل إلى fixed لتظهر على كامل الشاشة */
             font-size: 40px;
             animation: balloon 4s linear forwards;
-            z-index: 10;
+            z-index: 999; /* تم زيادة الـ z-index لتظهر فوق كل شيء */
             pointer-events: none;
             user-select: none;
             left: calc(5% + (90% * var(--random-pos)));
-            bottom: -50px;
+            bottom: -50px; /* تبدأ من أسفل الشاشة */
         }
 
         @keyframes glow {
@@ -185,7 +188,6 @@
 
     <div class="university-header">إعدادي هندسة بورسعيد دفعة 2025</div>
 
-    <!-- واجهة جروب A -->
     <div id="groupA" class="group-content active">
         <h1>هانت يا هندسة ⚙️</h1>
         <div id="countdownA">
@@ -218,7 +220,6 @@
         </table>
     </div>
 
-    <!-- واجهة جروب B -->
     <div id="groupB" class="group-content">
         <h1>هانت يا هندسة ⚙️</h1>
         <div id="countdownB">
@@ -254,8 +255,9 @@
     <div class="prophet-message">صل على سيدنا محمد</div>
 
     <script>
-        let motivationAdded = false;
+        let motivationAdded = false; // لتجنب تكرار إضافة رسالة التحفيز
 
+        // وظيفة لإظهار محتوى جروب معين
         function showGroup(group) {
             document.querySelectorAll('.group-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-button').forEach(el => el.classList.remove('active'));
@@ -264,40 +266,44 @@
             document.querySelector(`button[onclick="showGroup('${group}')"]`).classList.add('active');
         }
 
-        function createBalloons(group) {
+        // وظيفة لإنشاء وإطلاق البالونات
+        function createBalloons() {
             const balloons = ['🎈', '🎉', '🎊', '✨', '🎁'];
-            const container = document.body; // تغيير مهم: نستخدم body بدلاً من المجموعة
+            const container = document.body; // البالونات تظهر على مستوى الجسم بالكامل
             
-            // تنظيف أي بالونات سابقة
-            const oldBalloons = document.querySelectorAll('.balloon');
-            oldBalloons.forEach(b => b.remove());
+            // إزالة أي بالونات موجودة لتجنب التراكم
+            document.querySelectorAll('.balloon').forEach(b => b.remove());
             
-            for(let i = 0; i < 20; i++) {
+            for(let i = 0; i < 30; i++) { // زيادة عدد البالونات لتبدو أفضل
                 setTimeout(() => {
                     const balloon = document.createElement('div');
                     balloon.className = 'balloon';
                     balloon.textContent = balloons[Math.floor(Math.random() * balloons.length)];
                     balloon.style.setProperty('--random-pos', Math.random());
-                    balloon.style.animationDuration = 3 + Math.random() * 2 + 's';
-                    balloon.style.animationDelay = Math.random() * 0.5 + 's';
+                    balloon.style.animationDuration = (3 + Math.random() * 2) + 's'; // مدة حركة عشوائية
+                    balloon.style.animationDelay = (Math.random() * 0.5) + 's'; // تأخير عشوائي
                     container.appendChild(balloon);
                     
-                    // إزالة البالون من DOM بعد انتهاء الحركة
-                    setTimeout(() => {
+                    // إزالة البالون من DOM بعد انتهاء الحركة لعدم إثقال الصفحة
+                    balloon.addEventListener('animationend', () => {
                         balloon.remove();
-                    }, 5000);
-                }, i * 150);
+                    });
+                }, i * 150); // إطلاق البالونات على فترات متباعدة قليلاً
             }
         }
 
-        const targetDateA = new Date(2025, 5, 19, 16, 0, 0);
-        const targetDateB = new Date(2025, 5, 17, 16, 0, 0);
+        // تواريخ انتهاء الامتحانات لكل جروب
+        // يرجى ملاحظة أن الشهور في JavaScript تبدأ من 0 (يناير = 0، ديسمبر = 11)
+        const targetDateA = new Date(2025, 5, 19, 16, 0, 0); // 19 يونيو 2025، الساعة 4 مساءً
+        const targetDateB = new Date(2025, 5, 17, 16, 0, 0); // 17 يونيو 2025، الساعة 4 مساءً
 
+        // الكائنات لتخزين معرفات الـ setInterval لكل جروب
         const intervals = {
-            A: setInterval(() => updateCountdown('A', targetDateA), 1000),
-            B: setInterval(() => updateCountdown('B', targetDateB), 1000)
+            A: null,
+            B: null
         };
 
+        // تحديث العد التنازلي وحالة الامتحانات
         function updateCountdown(group, targetDate) {
             const now = new Date().getTime();
             const distance = targetDate - now;
@@ -309,12 +315,16 @@
             const secondsElement = document.getElementById(`seconds${group}`);
 
             if (distance < 0) {
-                clearInterval(intervals[group]);
+                // إذا انتهى العد التنازلي
+                clearInterval(intervals[group]); // إيقاف التحديث للجروب
                 countdownElement.innerHTML = `<div class="congrats">ألف مبروك يا هندسة و عقبال التخرج 🥳🥳</div>`;
                 
-                // إظهار البالونات لهذا الجروب
-                createBalloons(group);
+                // إظهار البالونات فقط إذا كانت هذه المجموعة هي النشطة حالياً
+                if (document.getElementById(`group${group}`).classList.contains('active')) {
+                    createBalloons();
+                }
                 
+                // إضافة رسالة التحفيز لجروب A إذا انتهى جروب B أولاً
                 if(group === 'B' && !motivationAdded) {
                     const motivation = document.createElement('div');
                     motivation.className = 'motivation';
@@ -323,6 +333,7 @@
                     motivationAdded = true;
                 }
                 
+                // إزالة رسالة التحفيز عندما ينتهي جروب A
                 if(group === 'A') {
                     const motivation = document.querySelector('.motivation');
                     if(motivation) motivation.remove();
@@ -330,17 +341,20 @@
                 return;
             }
 
+            // حساب الوقت المتبقي
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+            // عرض الوقت المتبقي
             daysElement.textContent = days;
             hoursElement.textContent = hours;
             minutesElement.textContent = minutes;
             secondsElement.textContent = seconds;
         }
 
+        // تحديث حالة الامتحانات (مكتملة أم لا)
         function updateExamStatus() {
             const now = new Date();
             
@@ -349,7 +363,7 @@
                 exams.forEach(exam => {
                     const dateString = exam.cells[1].textContent;
                     const [day, monthName, year] = dateString.split(' ');
-                    const monthMap = {'مايو': 4, 'يونيو': 5};
+                    const monthMap = {'مايو': 4, 'يونيو': 5}; // تمثيل الشهور بالأرقام (يناير=0)
                     const examDate = new Date(year, monthMap[monthName], day);
                     exam.classList.toggle('completed', now > examDate);
                 });
@@ -359,13 +373,18 @@
             processExams('B');
         }
 
-        setInterval(() => {
+        // تعيين فواصل زمنية لتحديث العد التنازلي وحالة الامتحانات
+        intervals.A = setInterval(() => {
             updateCountdown('A', targetDateA);
+            updateExamStatus();
+        }, 1000);
+
+        intervals.B = setInterval(() => {
             updateCountdown('B', targetDateB);
             updateExamStatus();
         }, 1000);
 
-        // التهيئة الأولية
+        // التهيئة الأولية عند تحميل الصفحة
         updateCountdown('A', targetDateA);
         updateCountdown('B', targetDateB);
         updateExamStatus();
